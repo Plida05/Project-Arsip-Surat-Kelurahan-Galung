@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Pages\Login;
 use App\Filament\Admin\Widgets\ArsipStatsOverview;
 use App\Filament\Admin\Widgets\SuratChart;
 use Filament\Http\Middleware\Authenticate;
@@ -28,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->brandName('Kelurahan Galung')
             ->colors([
                 'primary' => Color::Amber,
