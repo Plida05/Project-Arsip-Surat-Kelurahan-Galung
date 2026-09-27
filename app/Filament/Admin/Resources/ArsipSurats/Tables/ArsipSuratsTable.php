@@ -74,6 +74,17 @@ class ArsipSuratsTable
                     ->sortable()
                     ->toggleable(),
 
+                TextColumn::make('file_surat')
+    ->label('File')
+    ->formatStateUsing(fn ($state) => $state ? '📄 Lihat PDF' : '-')
+    ->url(fn ($record) => $record->file_surat
+        ? asset('storage/' . $record->file_surat)
+        : null)
+    ->openUrlInNewTab()
+    ->color('warning')
+    ->weight('bold')
+    ->alignCenter(),
+
                 TextColumn::make('user.name')
                     ->label('Diinput Oleh')
                     ->searchable()
