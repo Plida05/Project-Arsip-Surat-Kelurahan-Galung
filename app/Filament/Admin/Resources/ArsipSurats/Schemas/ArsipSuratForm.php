@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ArsipSurats\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class ArsipSuratForm
@@ -33,12 +35,27 @@ class ArsipSuratForm
                     ->relationship('kategori', 'nama')
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->required()
+                    ->live(),
 
                 TextInput::make('nomor_surat')
                     ->label('Nomor Surat')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true)
+                    ->validationMessages([
+                        'unique' => 'Nomor surat ini sudah terdaftar. Gunakan nomor lain.',
+                    ])
+                    ->suffixAction(
+                        Action::make('generateNomor')
+                            ->label('Generate')
+                            ->icon('heroicon-o-sparkles')
+                            ->color('warning')
+                            ->action(function (Set $set, Get $get) {
+                                $nomorBaru = \App\Models\ArsipSurat::generateNomorSurat($get('kategori_id'));
+                                $set('nomor_surat', $nomorBaru);
+                            })
+                    ),
 
                 DatePicker::make('tanggal_surat')
                     ->label('Tanggal Surat')
@@ -61,7 +78,11 @@ class ArsipSuratForm
                 DatePicker::make('tanggal_terima')
                     ->label('Tanggal Diterima')
                     ->native(false)
-                    ->displayFormat('d/m/Y'),
+                    ->displayFormat('d/m/Y')
+                    ->afterOrEqual('tanggal_surat')
+                    ->validationMessages([
+                        'after_or_equal' => 'Tanggal diterima tidak boleh lebih awal dari tanggal surat.',
+                    ]),
 
                 TextInput::make('perihal')
                     ->label('Perihal')

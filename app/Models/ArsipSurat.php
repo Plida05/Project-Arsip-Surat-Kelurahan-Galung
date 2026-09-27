@@ -19,4 +19,26 @@ class ArsipSurat extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public static function generateNomorSurat(?int $kategoriId): string
+    {
+        $tahun = date('Y');
+        $kodeKlasifikasi = '000';
+        $kodeKelurahan = 'KEL-GLG';
+
+        if ($kategoriId) {
+            $kategori = KategoriSurat::find($kategoriId);
+            if ($kategori && $kategori->kode_klasifikasi) {
+                $kodeKlasifikasi = $kategori->kode_klasifikasi;
+            }
+        }
+
+        // Hitung urutan untuk kombinasi tahun + kode klasifikasi
+        $urutan = self::where('nomor_surat', 'like', "$kodeKlasifikasi/%/$kodeKelurahan/$tahun")
+            ->count() + 1;
+
+        $urutanPadded = str_pad($urutan, 3, '0', STR_PAD_LEFT);
+
+        return "$kodeKlasifikasi/$urutanPadded/$kodeKelurahan/$tahun";
+    }
 }
