@@ -18,9 +18,11 @@ class ArsipSuratResource extends Resource
 {
     protected static ?string $model = ArsipSurat::class;
     protected static ?string $modelLabel = 'Arsip Surat';
-protected static ?string $pluralModelLabel = 'Arsip Surat';
+    protected static ?string $pluralModelLabel = 'Arsip Surat';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBox;
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nomor_surat';
 

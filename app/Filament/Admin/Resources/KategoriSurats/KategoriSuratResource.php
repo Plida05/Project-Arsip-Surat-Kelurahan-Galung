@@ -20,8 +20,9 @@ class KategoriSuratResource extends Resource
     protected static ?string $modelLabel = 'Kategori Surat';
     protected static ?string $pluralModelLabel = 'Kategori Surat';
 
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'nama';
 
