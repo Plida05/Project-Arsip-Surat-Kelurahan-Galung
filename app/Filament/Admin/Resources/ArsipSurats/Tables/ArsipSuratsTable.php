@@ -118,8 +118,14 @@ class ArsipSuratsTable
                     ->preload(),
             ])
             ->recordActions([
-                EditAction::make(),
-            ])
+    Action::make('print')
+        ->label('Print')
+        ->icon('heroicon-o-printer')
+        ->color('info')
+        ->url(fn ($record) => route('arsip.print', $record->id))
+        ->openUrlInNewTab(),
+    EditAction::make(),
+])
             ->toolbarActions([
                 Action::make('export')
                     ->label('Export CSV')

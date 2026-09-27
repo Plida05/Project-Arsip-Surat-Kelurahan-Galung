@@ -7,6 +7,7 @@ Route::get('/', function () {
     return redirect('/admin');
 });
 
+// Export CSV
 Route::get('/admin/export-arsip', function () {
     $filename = 'arsip-surat-' . now()->format('Y-m-d') . '.csv';
 
@@ -19,16 +20,8 @@ Route::get('/admin/export-arsip', function () {
         $file = fopen('php://output', 'w');
 
         fputcsv($file, [
-            'No',
-            'Jenis',
-            'Nomor Surat',
-            'Kategori',
-            'Perihal',
-            'Asal',
-            'Tujuan',
-            'Tanggal Surat',
-            'Tanggal Terima',
-            'Keterangan',
+            'No', 'Jenis', 'Nomor Surat', 'Kategori', 'Perihal',
+            'Asal', 'Tujuan', 'Tanggal Surat', 'Tanggal Terima', 'Keterangan',
         ]);
 
         $no = 1;
@@ -54,3 +47,9 @@ Route::get('/admin/export-arsip', function () {
 
     return response()->stream($callback, 200, $headers);
 });
+
+// Print surat
+Route::get('/admin/arsip-surat/{id}/print', function ($id) {
+    $surat = ArsipSurat::with(['kategori', 'user'])->findOrFail($id);
+    return view('print.arsip-surat', compact('surat'));
+})->name('arsip.print');
