@@ -3,12 +3,14 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Admin\Pages\Login;
+use App\Filament\Admin\Resources\Users\UserResource;
 use App\Filament\Admin\Widgets\ArsipStatsOverview;
 use App\Filament\Admin\Widgets\SuratChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -41,6 +43,12 @@ class AdminPanelProvider extends PanelProvider
                 ArsipStatsOverview::class,
                 SuratChart::class,
                 AccountWidget::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Kelola User')
+                    ->url(fn () => UserResource::getUrl())
+                    ->icon('heroicon-o-users'),
             ])
             ->middleware([
                 EncryptCookies::class,
