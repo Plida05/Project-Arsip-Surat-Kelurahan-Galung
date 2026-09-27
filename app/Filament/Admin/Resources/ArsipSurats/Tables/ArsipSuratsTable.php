@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\ArsipSurats\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -75,15 +75,15 @@ class ArsipSuratsTable
                     ->toggleable(),
 
                 TextColumn::make('file_surat')
-    ->label('File')
-    ->formatStateUsing(fn ($state) => $state ? '📄 Lihat PDF' : '-')
-    ->url(fn ($record) => $record->file_surat
-        ? asset('storage/' . $record->file_surat)
-        : null)
-    ->openUrlInNewTab()
-    ->color('warning')
-    ->weight('bold')
-    ->alignCenter(),
+                    ->label('File')
+                    ->formatStateUsing(fn ($state) => $state ? '📄 Lihat PDF' : '-')
+                    ->url(fn ($record) => $record->file_surat
+                        ? asset('storage/' . $record->file_surat)
+                        : null)
+                    ->openUrlInNewTab()
+                    ->color('warning')
+                    ->weight('bold')
+                    ->alignCenter(),
 
                 TextColumn::make('user.name')
                     ->label('Diinput Oleh')
@@ -121,6 +121,12 @@ class ArsipSuratsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
+                Action::make('export')
+                    ->label('Export CSV')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->url(fn () => url('/admin/export-arsip'))
+                    ->openUrlInNewTab(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
