@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Admin\Pages\Login;
+use App\Filament\Admin\Resources\Activities\ActivityResource;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Filament\Admin\Widgets\ArsipStatsOverview;
 use App\Filament\Admin\Widgets\SuratChart;
@@ -45,6 +46,10 @@ class AdminPanelProvider extends PanelProvider
                 AccountWidget::class,
             ])
             ->userMenuItems([
+                MenuItem::make()
+                    ->label('Riwayat Aktivitas')
+                    ->url(fn () => ActivityResource::getUrl())
+                    ->icon('heroicon-o-clock'),
                 MenuItem::make()
                     ->label('Kelola User')
                     ->url(fn () => UserResource::getUrl())

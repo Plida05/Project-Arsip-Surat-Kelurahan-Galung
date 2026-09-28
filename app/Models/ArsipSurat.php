@@ -4,11 +4,31 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ArsipSurat extends Model
 {
+    use LogsActivity, SoftDeletes;
+
     protected $table = 'arsip_surat';
     protected $guarded = ['id'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
+                'created' => 'Membuat arsip surat baru',
+                'updated' => 'Mengubah arsip surat',
+                'deleted' => 'Menghapus arsip surat',
+                'restored' => 'Memulihkan arsip surat',
+                default => $eventName,
+            });
+    }
 
     public function kategori(): BelongsTo
     {
@@ -33,8 +53,8 @@ class ArsipSurat extends Model
             }
         }
 
-        // Hitung urutan untuk kombinasi tahun + kode klasifikasi
-        $urutan = self::where('nomor_surat', 'like', "$kodeKlasifikasi/%/$kodeKelurahan/$tahun")
+        $urutan = self::withTrashed()
+            ->where('nomor_surat', 'like', "$kodeKlasifikasi/%/$kodeKelurahan/$tahun")
             ->count() + 1;
 
         $urutanPadded = str_pad($urutan, 3, '0', STR_PAD_LEFT);

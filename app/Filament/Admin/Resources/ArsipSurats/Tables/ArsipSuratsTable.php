@@ -6,8 +6,13 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class ArsipSuratsTable
@@ -85,6 +90,13 @@ class ArsipSuratsTable
                     ->weight('bold')
                     ->alignCenter(),
 
+                TextColumn::make('deleted_at')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state ? 'Terhapus' : 'Aktif')
+                    ->color(fn ($state) => $state ? 'danger' : 'success')
+                    ->sortable(),
+
                 TextColumn::make('user.name')
                     ->label('Diinput Oleh')
                     ->searchable()
@@ -95,15 +107,12 @@ class ArsipSuratsTable
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('updated_at')
-                    ->label('Diupdate')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('tanggal_surat', 'desc')
             ->filters([
+                TrashedFilter::make()
+                    ->label('Status Data'),
+
                 SelectFilter::make('jenis')
                     ->label('Jenis Surat')
                     ->options([
@@ -118,14 +127,16 @@ class ArsipSuratsTable
                     ->preload(),
             ])
             ->recordActions([
-    Action::make('print')
-        ->label('Print')
-        ->icon('heroicon-o-printer')
-        ->color('info')
-        ->url(fn ($record) => route('arsip.print', $record->id))
-        ->openUrlInNewTab(),
-    EditAction::make(),
-])
+                Action::make('print')
+                    ->label('Print')
+                    ->icon('heroicon-o-printer')
+                    ->color('info')
+                    ->url(fn ($record) => route('arsip.print', $record->id))
+                    ->openUrlInNewTab(),
+                EditAction::make(),
+                RestoreAction::make(),
+                ForceDeleteAction::make(),
+            ])
             ->toolbarActions([
                 Action::make('export')
                     ->label('Export CSV')
@@ -135,6 +146,8 @@ class ArsipSuratsTable
                     ->openUrlInNewTab(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }
