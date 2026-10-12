@@ -8,4 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateKategoriSurat extends CreateRecord
 {
     protected static string $resource = KategoriSuratResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

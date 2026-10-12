@@ -5,8 +5,10 @@ namespace App\Providers\Filament;
 use App\Filament\Admin\Pages\Login;
 use App\Filament\Admin\Resources\Activities\ActivityResource;
 use App\Filament\Admin\Resources\Users\UserResource;
+use App\Filament\Admin\Widgets\AksiCepat;
 use App\Filament\Admin\Widgets\ArsipStatsOverview;
 use App\Filament\Admin\Widgets\SuratChart;
+use App\Filament\Admin\Widgets\SuratJenisChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -16,7 +18,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -41,9 +42,10 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
+                AksiCepat::class,
                 ArsipStatsOverview::class,
                 SuratChart::class,
-                AccountWidget::class,
+                SuratJenisChart::class,
             ])
             ->userMenuItems([
                 MenuItem::make()

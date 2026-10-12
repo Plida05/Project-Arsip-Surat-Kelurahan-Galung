@@ -5,32 +5,38 @@ namespace App\Filament\Admin\Widgets;
 use App\Models\ArsipSurat;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class SuratChart extends ChartWidget
 {
-    protected ?string $heading = 'Statistik Surat 6 Bulan Terakhir';
+    use InteractsWithPageFilters;
 
-    protected static ?int $sort = 1;
+    protected ?string $heading = 'Statistik Surat per Bulan';
+
+    protected static ?int $sort = 3;
+
+    protected int|string|array $columnSpan = 1;
 
     protected function getData(): array
     {
+        $tahun = (int) ($this->filters['tahun'] ?? date('Y'));
+
         $bulanLabels = [];
         $dataMasuk = [];
         $dataKeluar = [];
 
-        // 6 bulan terakhir
-        for ($i = 5; $i >= 0; $i--) {
-            $bulan = Carbon::now()->subMonths($i);
-            $bulanLabels[] = $bulan->isoFormat('MMM Y');
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
+            $tanggal = Carbon::create($tahun, $bulan, 1);
+            $bulanLabels[] = $tanggal->isoFormat('MMM');
 
             $dataMasuk[] = ArsipSurat::where('jenis', 'masuk')
-                ->whereYear('tanggal_surat', $bulan->year)
-                ->whereMonth('tanggal_surat', $bulan->month)
+                ->whereYear('tanggal_surat', $tahun)
+                ->whereMonth('tanggal_surat', $bulan)
                 ->count();
 
             $dataKeluar[] = ArsipSurat::where('jenis', 'keluar')
-                ->whereYear('tanggal_surat', $bulan->year)
-                ->whereMonth('tanggal_surat', $bulan->month)
+                ->whereYear('tanggal_surat', $tahun)
+                ->whereMonth('tanggal_surat', $bulan)
                 ->count();
         }
 
@@ -56,25 +62,5 @@ class SuratChart extends ChartWidget
     protected function getType(): string
     {
         return 'bar';
-    }
-
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => true,
-                    'position' => 'bottom',
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'beginAtZero' => true,
-                    'ticks' => [
-                        'stepSize' => 1,
-                    ],
-                ],
-            ],
-        ];
     }
 }

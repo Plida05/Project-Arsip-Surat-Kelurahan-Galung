@@ -13,10 +13,35 @@ class KategoriSuratForm
         return $schema
             ->components([
                 TextInput::make('kode')
-                    ->required(),
+                    ->label('Kode')
+                    ->required()
+                    ->maxLength(10)
+                    ->unique(ignoreRecord: true)
+                    ->validationMessages([
+                        'unique' => 'Kode ini sudah digunakan. Gunakan kode lain.',
+                    ])
+                    ->helperText('Contoh: UND, PRM, EDR'),
+
+                TextInput::make('kode_klasifikasi')
+                    ->label('Kode Klasifikasi')
+                    ->required()
+                    ->maxLength(10)
+                    ->unique(ignoreRecord: true)
+                    ->validationMessages([
+                        'unique' => 'Kode klasifikasi ini sudah digunakan. Gunakan kode lain.',
+                    ])
+                    ->placeholder('Contoh: 005, 010, 020')
+                    ->helperText('Kode standar arsip pemerintahan. Harus unik.'),
+
                 TextInput::make('nama')
-                    ->required(),
+                    ->label('Nama Kategori')
+                    ->required()
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+
                 Textarea::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->rows(3)
                     ->columnSpanFull(),
             ]);
     }

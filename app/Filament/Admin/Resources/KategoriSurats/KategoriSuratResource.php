@@ -43,6 +43,21 @@ class KategoriSuratResource extends Resource
         ];
     }
 
+public static function canDelete($record): bool
+{
+    if ($record->arsipSurats()->count() > 0) {
+        \Filament\Notifications\Notification::make()
+            ->title('Kategori Tidak Bisa Dihapus')
+            ->body('Kategori ini masih digunakan oleh ' . $record->arsipSurats()->count() . ' arsip surat. Pindahkan atau hapus surat terlebih dahulu.')
+            ->danger()
+            ->send();
+
+        return false;
+    }
+
+    return true;
+}
+
     public static function getPages(): array
     {
         return [

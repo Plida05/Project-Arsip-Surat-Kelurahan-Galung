@@ -113,6 +113,19 @@ class ArsipSuratsTable
                 TrashedFilter::make()
                     ->label('Status Data'),
 
+                SelectFilter::make('tahun')
+    ->label('Tahun')
+    ->options([
+        '2024' => '2024',
+        '2025' => '2025',
+        '2026' => '2026',
+    ])
+    ->query(function ($query, array $data) {
+        if (!empty($data['value'])) {
+            $query->whereYear('tanggal_surat', $data['value']);
+        }
+    }),
+
                 SelectFilter::make('jenis')
                     ->label('Jenis Surat')
                     ->options([
